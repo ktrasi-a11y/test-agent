@@ -1,0 +1,23 @@
+steps:
+  - name: "python:3.11-slim"
+    id: "deploy-agent-engine"
+    entrypoint: "bash"
+    args:
+      - "-c"
+      - |
+        pip install --no-cache-dir -r requirements.txt
+        python deploy.py
+    env:
+      - "GOOGLE_CLOUD_PROJECT=${_PROJECT_ID}"
+      - "GOOGLE_CLOUD_LOCATION=${_LOCATION}"
+      - "STAGING_BUCKET=${_STAGING_BUCKET}"
+      - "AGENT_DISPLAY_NAME=${_AGENT_DISPLAY_NAME}"
+
+substitutions:
+  _PROJECT_ID: "elevate-ktrasi"
+  _LOCATION: "us-central1"
+  _STAGING_BUCKET: "gs://elevate-ktrasi-agent-staging"
+  _AGENT_DISPLAY_NAME: "minimal-agent"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
