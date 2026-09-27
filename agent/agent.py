@@ -38,13 +38,17 @@ def sanitize_prompt_callback(
     if not user_text:
         return None
 
-    client = _get_model_armor_client()
-    response = client.sanitize_user_prompt(
-        request=modelarmor_v1.SanitizeUserPromptRequest(
-            name=MODEL_ARMOR_TEMPLATE,
-            user_prompt_data=modelarmor_v1.DataItem(text=user_text),
+    try:
+        client = _get_model_armor_client()
+        response = client.sanitize_user_prompt(
+            request=modelarmor_v1.SanitizeUserPromptRequest(
+                name=MODEL_ARMOR_TEMPLATE,
+                user_prompt_data=modelarmor_v1.DataItem(text=user_text),
+            )
         )
-    )
+    except Exception as exc:
+        print(f"Warning: Model Armor prompt check skipped ({exc})")
+        return None
 
     if (
         response.sanitization_result.filter_match_state
@@ -76,13 +80,17 @@ def sanitize_response_callback(
     if not model_text:
         return None
 
-    client = _get_model_armor_client()
-    response = client.sanitize_model_response(
-        request=modelarmor_v1.SanitizeModelResponseRequest(
-            name=MODEL_ARMOR_TEMPLATE,
-            model_response_data=modelarmor_v1.DataItem(text=model_text),
+    try:
+        client = _get_model_armor_client()
+        response = client.sanitize_model_response(
+            request=modelarmor_v1.SanitizeModelResponseRequest(
+                name=MODEL_ARMOR_TEMPLATE,
+                model_response_data=modelarmor_v1.DataItem(text=model_text),
+            )
         )
-    )
+    except Exception as exc:
+        print(f"Warning: Model Armor response check skipped ({exc})")
+        return None
 
     if (
         response.sanitization_result.filter_match_state

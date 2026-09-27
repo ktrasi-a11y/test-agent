@@ -6,6 +6,7 @@ steps:
       - "-c"
       - |
         pip install --no-cache-dir -r requirements.txt
+        python evaluate.py
         python deploy.py
     env:
       - "GOOGLE_CLOUD_PROJECT=${_PROJECT_ID}"
