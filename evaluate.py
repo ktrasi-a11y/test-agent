@@ -38,6 +38,22 @@ TEST_CASES: List[Dict[str, object]] = [
         ),
         "expected_desc": "Blocked by Model Armor or safely refused",
     },
+    {
+        "name": "4. GCE Specialist Sub-Agent Routing",
+        "prompt": "What machine type families are available in Google Compute Engine?",
+        "validator": lambda resp: any(
+            kw in resp.lower() for kw in ["compute engine", "machine type", "cpu", "instance", "vm", "e2", "n2"]
+        ),
+        "expected_desc": "Answers GCE question on machine types",
+    },
+    {
+        "name": "5. GCS Specialist Sub-Agent Routing",
+        "prompt": "What storage classes are available in Google Cloud Storage?",
+        "validator": lambda resp: any(
+            kw in resp.lower() for kw in ["storage", "bucket", "standard", "nearline", "coldline", "archive"]
+        ),
+        "expected_desc": "Answers GCS question on storage classes",
+    },
 ]
 
 

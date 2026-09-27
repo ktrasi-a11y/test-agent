@@ -109,12 +109,70 @@ def sanitize_response_callback(
     return None
 
 
-root_agent = Agent(
-    name="minimal_agent",
+gce_agent = Agent(
+    name="gce_agent",
     model="gemini-2.5-flash",
-    description="A minimal generic assistant agent protected by Model Armor.",
-    instruction="You are a concise assistant.",
+    description="Specialist sub-agent that answers all questions regarding Google Compute Engine (GCE) only.",
+    instruction=(
+        "You are an expert technical specialist dedicated exclusively to Google Compute Engine (GCE).\n"
+        "You answer all questions related to Google Compute Engine (GCE), such as:\n"
+        "- Virtual machine (VM) instances and compute instances\n"
+        "- Machine types, CPU and memory configurations, GPUs, and TPUs\n"
+        "- Persistent disks, Local SSDs, and storage disks attached to VMs\n"
+        "- OS images, custom images, instance templates, and machine images\n"
+        "- Managed Instance Groups (MIGs), unmanaged instance groups, and autoscaling\n"
+        "- Compute Engine networking (VPC interfaces, internal and external IPs, firewall rules)\n\n"
+        "STRICT CONSTRAINT:\n"
+        "You must ONLY answer questions related to Google Compute Engine (GCE). "
+        "If a user asks about any other topic (including Google Cloud Storage or non-GCE topics), "
+        "you must politely decline and state that you only answer questions on Google Compute Engine (GCE)."
+    ),
     before_model_callback=sanitize_prompt_callback,
     after_model_callback=sanitize_response_callback,
 )
+
+
+gcs_agent = Agent(
+    name="gcs_agent",
+    model="gemini-2.5-flash",
+    description="Specialist sub-agent that answers all questions regarding Google Cloud Storage (GCS) only.",
+    instruction=(
+        "You are an expert technical specialist dedicated exclusively to Google Cloud Storage (GCS).\n"
+        "You answer all questions related to Google Cloud Storage (GCS), such as:\n"
+        "- Storage buckets and objects\n"
+        "- Storage classes (Standard, Nearline, Coldline, Archive)\n"
+        "- Bucket lifecycle management rules and object versioning\n"
+        "- Access control, IAM policies, signed URLs, and ACLs\n"
+        "- Data transfer, upload/download operations, and gsutil / gcloud storage commands\n\n"
+        "STRICT CONSTRAINT:\n"
+        "You must ONLY answer questions related to Google Cloud Storage (GCS). "
+        "If a user asks about any other topic (including Google Compute Engine or non-GCS topics), "
+        "you must politely decline and state that you only answer questions on Google Cloud Storage (GCS)."
+    ),
+    before_model_callback=sanitize_prompt_callback,
+    after_model_callback=sanitize_response_callback,
+)
+
+
+root_agent = Agent(
+    name="minimal_agent",
+    model="gemini-2.5-flash",
+    description=(
+        "A coordinator agent with two specialized sub-agents: "
+        "gce_agent for Google Compute Engine questions and gcs_agent for Google Cloud Storage questions."
+    ),
+    instruction=(
+        "You are a coordinator assistant that routes user requests to specialized sub-agents:\n"
+        "1. gce_agent: Specialist sub-agent that answers all questions on Google Compute Engine (GCE) only.\n"
+        "2. gcs_agent: Specialist sub-agent that answers all questions on Google Cloud Storage (GCS) only.\n\n"
+        "Routing guidelines:\n"
+        "- When the user asks a question related to Google Compute Engine (GCE), transfer the request to gce_agent.\n"
+        "- When the user asks a question related to Google Cloud Storage (GCS), transfer the request to gcs_agent.\n"
+        "- For general questions that do not relate to GCE or GCS, provide a concise answer."
+    ),
+    sub_agents=[gce_agent, gcs_agent],
+    before_model_callback=sanitize_prompt_callback,
+    after_model_callback=sanitize_response_callback,
+)
+
 
