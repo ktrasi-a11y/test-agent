@@ -1,2 +1,5 @@
 google-adk>=1.0.0
 google-cloud-aiplatform[adk,agent_engines]>=1.93.0
+google-cloud-modelarmor>=0.1.0
+cloudpickle>=3.0.0
+pydantic>=2.12.0

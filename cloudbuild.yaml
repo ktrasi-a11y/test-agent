@@ -12,12 +12,14 @@ steps:
       - "GOOGLE_CLOUD_LOCATION=${_LOCATION}"
       - "STAGING_BUCKET=${_STAGING_BUCKET}"
       - "AGENT_DISPLAY_NAME=${_AGENT_DISPLAY_NAME}"
+      - "MODEL_ARMOR_TEMPLATE_ID=${_MODEL_ARMOR_TEMPLATE_ID}"
 
 substitutions:
   _PROJECT_ID: "elevate-ktrasi"
   _LOCATION: "us-central1"
   _STAGING_BUCKET: "gs://elevate-ktrasi-agent-staging"
   _AGENT_DISPLAY_NAME: "minimal-agent"
+  _MODEL_ARMOR_TEMPLATE_ID: "minimal-agent-armor"
 
 options:
   logging: CLOUD_LOGGING_ONLY
